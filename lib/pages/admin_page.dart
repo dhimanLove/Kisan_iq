@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:get/get.dart';
 import 'package:kisan_iq/pages/chat_bot.dart';
 import 'package:kisan_iq/pages/description_generator.dart';
 import 'package:kisan_iq/pages/news_page.dart';
@@ -28,8 +29,6 @@ class _AdminPanelState extends State<AdminPanel> {
     Color(0xFF7B1FA2), // Purple
   ];
 
-  final List<String> _titles = const ["Chat", "Analyze", "News"];
-
   void _onItemTapped(int index) {
     setState(() => _selectedIndex = index);
     _pageController.jumpToPage(index);
@@ -37,6 +36,9 @@ class _AdminPanelState extends State<AdminPanel> {
 
   @override
   Widget build(BuildContext context) {
+    // Dynamically get titles to support locale changes
+    final List<String> titles = ["chatbot".tr, "analyze".tr, "news".tr];
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: Column(
@@ -70,9 +72,12 @@ class _AdminPanelState extends State<AdminPanel> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                _buildNavItem(Icons.chat_bubble_outline, Icons.chat_bubble, 0),
-                _buildNavItem(Icons.auto_awesome, Icons.auto_awesome, 1),
-                _buildNavItem(Icons.newspaper_outlined, Icons.newspaper, 2),
+                _buildNavItem(
+                    Icons.chat_bubble_outline, Icons.chat_bubble, 0, titles),
+                _buildNavItem(
+                    Icons.auto_awesome, Icons.auto_awesome, 1, titles),
+                _buildNavItem(
+                    Icons.newspaper_outlined, Icons.newspaper, 2, titles),
               ],
             ),
           ),
@@ -81,7 +86,8 @@ class _AdminPanelState extends State<AdminPanel> {
     );
   }
 
-  Widget _buildNavItem(IconData outlinedIcon, IconData filledIcon, int index) {
+  Widget _buildNavItem(IconData outlinedIcon, IconData filledIcon, int index,
+      List<String> titles) {
     final bool isSelected = _selectedIndex == index;
 
     return GestureDetector(
@@ -106,7 +112,7 @@ class _AdminPanelState extends State<AdminPanel> {
             if (isSelected) ...[
               const SizedBox(width: 8),
               Text(
-                _titles[index],
+                titles[index],
                 style: TextStyle(
                   color: _accentColors[index],
                   fontWeight: FontWeight.w500,

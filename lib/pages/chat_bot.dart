@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:math';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:dash_chat_2/dash_chat_2.dart';
 import 'package:flutter/material.dart';
@@ -36,7 +37,6 @@ class _ChatBotState extends State<ChatBot> {
   final String apiUrl =
       "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=$GEMINI_API_KEY";
 
-
   final String systemPrompt = """
 You are AgriAssist, an expert agricultural assistant with 20 years of experience. 
 Provide practical, actionable advice to farmers.
@@ -72,14 +72,7 @@ Respond in the same language as the user's question.
         ChatMessage(
           user: geminiUser,
           createdAt: DateTime.now(),
-          text: "🌱 Hello Farmer!\n\nI'm AgriAssist, your AI farming expert. "
-              "Ask me anything about:\n\n"
-              "• Crop health & diseases\n"
-              "• Soil testing & fertilizers\n"
-              "• Pest control solutions\n"
-              "• Irrigation scheduling\n"
-              "• Market prices\n\n"
-              "How can I help you today?",
+          text: "welcome_farmer".tr,
         ),
       ];
     });
@@ -103,35 +96,37 @@ Respond in the same language as the user's question.
 
   PreferredSizeWidget _buildAppBar() {
     return AppBar(
+      centerTitle: true,
+      automaticallyImplyLeading: false,
       elevation: 0,
       backgroundColor: primaryGreen,
       title: Row(
         children: [
           Container(
-            padding: const EdgeInsets.all(8),
+            padding: const EdgeInsets.all(6),
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(10),
             ),
-            child: Icon(Icons.eco, color: primaryGreen, size: 24),
+            child: Icon(Icons.eco, color: primaryGreen, size: 22),
           ),
-          const SizedBox(width: 12),
-          const Column(
+          const SizedBox(width: 10),
+          Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "AgriAssist AI",
-                style: TextStyle(
+                "agri_assist_ai".tr,
+                style: const TextStyle(
                   color: Colors.white,
-                  fontSize: 18,
+                  fontSize: 17,
                   fontWeight: FontWeight.w600,
                 ),
               ),
               Text(
-                "Online • Ready to help",
-                style: TextStyle(
+                "ready_to_help".tr,
+                style: const TextStyle(
                   color: Colors.white70,
-                  fontSize: 12,
+                  fontSize: 11,
                   fontWeight: FontWeight.w400,
                 ),
               ),
@@ -163,29 +158,36 @@ Respond in the same language as the user's question.
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+        titlePadding: const EdgeInsets.fromLTRB(18, 18, 18, 8),
+        contentPadding: const EdgeInsets.fromLTRB(18, 0, 18, 12),
+        actionsPadding: const EdgeInsets.fromLTRB(8, 0, 8, 6),
         title: Row(
           children: [
-            Icon(Icons.eco, color: primaryGreen),
+            Icon(Icons.eco, color: primaryGreen, size: 20),
             const SizedBox(width: 8),
-            const Text("About AgriAssist"),
+            Text(
+              "about_agri_assist".tr,
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+            ),
           ],
         ),
-        content: const Text(
-          "🤖  AI-Powered Farming Assistant \n\n"
-          "• Powered by Gemini 1.5 Flash\n"
-          "• Instant expert advice\n"
-          "• Free to use\n"
-          "• 24/7 available\n\n"
-          " Tips: \n"
-          "• Be specific with your questions\n"
-          "• Mention your crop type and region\n"
-          "• Ask follow-up questions",
+        content: Text(
+          "agri_assist_info".tr,
+          style: const TextStyle(fontSize: 14, height: 1.5),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text("Got it", style: TextStyle(color: primaryGreen)),
+            style: TextButton.styleFrom(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+              minimumSize: Size.zero,
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            ),
+            child: Text(
+              "got_it".tr,
+              style: TextStyle(color: primaryGreen, fontWeight: FontWeight.w600),
+            ),
           ),
         ],
       ),
@@ -194,31 +196,31 @@ Respond in the same language as the user's question.
 
   Widget _buildTypingIndicator() {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       color: lightBackground,
       child: Row(
         children: [
           Container(
-            padding: const EdgeInsets.all(8),
+            padding: const EdgeInsets.all(6),
             decoration: BoxDecoration(
               color: primaryGreen.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(10),
             ),
-            child: Icon(Icons.eco, color: primaryGreen, size: 18),
+            child: Icon(Icons.eco, color: primaryGreen, size: 16),
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: 10),
           Text(
-            "AgriAssist is thinking",
+            "agri_assist_thinking".tr,
             style: TextStyle(
               color: primaryGreen.withOpacity(0.8),
-              fontSize: 14,
+              fontSize: 13,
               fontWeight: FontWeight.w500,
             ),
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: 10),
           SizedBox(
-            width: 18,
-            height: 18,
+            width: 16,
+            height: 16,
             child: CircularProgressIndicator(
               strokeWidth: 2,
               valueColor: AlwaysStoppedAnimation<Color>(primaryGreen),
@@ -235,45 +237,44 @@ Respond in the same language as the user's question.
       onSend: _sendMessage,
       messages: messages,
       messageOptions: MessageOptions(
-        // ✅ Fixed alignment - messages now show properly
         showTime: true,
         showCurrentUserAvatar: false,
         showOtherUsersAvatar: true,
         avatarBuilder: (user, onPressAvatar, onLongPressAvatar) {
           if (user.id == geminiUser.id) {
             return Container(
-              margin: const EdgeInsets.only(right: 8),
-              padding: const EdgeInsets.all(8),
+              margin: const EdgeInsets.only(right: 8, bottom: 4),
+              padding: const EdgeInsets.all(6),
               decoration: BoxDecoration(
                 color: primaryGreen.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(10),
               ),
-              child: Icon(Icons.eco, color: primaryGreen, size: 20),
+              child: Icon(Icons.eco, color: primaryGreen, size: 18),
             );
           }
           return const SizedBox();
         },
-        borderRadius: 20,
+        borderRadius: 16,
         messagePadding: const EdgeInsets.symmetric(
-          horizontal: 16,
-          vertical: 12,
+          horizontal: 12,
+          vertical: 9,
         ),
         currentUserContainerColor: primaryGreen,
         containerColor: Colors.white,
         currentUserTextColor: Colors.white,
         textColor: Colors.black87,
-        maxWidth: MediaQuery.of(context).size.width * 0.75,
+        maxWidth: MediaQuery.of(context).size.width * 0.73,
       ),
       messageListOptions: MessageListOptions(
         separatorFrequency: SeparatorFrequency.days,
         dateSeparatorBuilder: (date) {
           return Container(
-            padding: const EdgeInsets.symmetric(vertical: 16),
+            padding: const EdgeInsets.symmetric(vertical: 10),
             child: Center(
               child: Container(
                 padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 6,
+                  horizontal: 12,
+                  vertical: 5,
                 ),
                 decoration: BoxDecoration(
                   color: primaryGreen.withOpacity(0.1),
@@ -283,7 +284,7 @@ Respond in the same language as the user's question.
                   _formatDate(date),
                   style: TextStyle(
                     color: primaryGreen,
-                    fontSize: 12,
+                    fontSize: 11,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -297,48 +298,48 @@ Respond in the same language as the user's question.
         alwaysShowSend: true,
         autocorrect: true,
         sendOnEnter: true,
-        inputToolbarMargin: const EdgeInsets.all(12),
+        inputToolbarMargin: const EdgeInsets.fromLTRB(10, 6, 10, 10),
         inputToolbarPadding: const EdgeInsets.symmetric(
-          horizontal: 16,
-          vertical: 8,
+          horizontal: 12,
+          vertical: 6,
         ),
         inputToolbarStyle: BoxDecoration(
-          borderRadius: BorderRadius.circular(30),
+          borderRadius: BorderRadius.circular(28),
           color: Colors.white,
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.05),
-              blurRadius: 10,
+              blurRadius: 8,
               offset: const Offset(0, -2),
             ),
           ],
         ),
         inputDecoration: InputDecoration(
-          hintText: "Ask about farming...",
+          hintText: "ask_farming_hint".tr,
           hintStyle: TextStyle(
             color: Colors.grey[500],
-            fontSize: 15,
+            fontSize: 14,
             fontWeight: FontWeight.w400,
           ),
           border: InputBorder.none,
           contentPadding: const EdgeInsets.symmetric(
-            horizontal: 16,
-            vertical: 12,
+            horizontal: 14,
+            vertical: 10,
           ),
         ),
         sendButtonBuilder: (onSend) {
           return GestureDetector(
             onTap: onSend,
             child: Container(
-              margin: const EdgeInsets.only(left: 8),
-              padding: const EdgeInsets.all(12),
+              margin: const EdgeInsets.only(left: 6),
+              padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: primaryGreen,
                 boxShadow: [
                   BoxShadow(
                     color: primaryGreen.withOpacity(0.3),
-                    blurRadius: 8,
+                    blurRadius: 6,
                     offset: const Offset(0, 2),
                   ),
                 ],
@@ -346,7 +347,7 @@ Respond in the same language as the user's question.
               child: const Icon(
                 Icons.send_rounded,
                 color: Colors.white,
-                size: 20,
+                size: 18,
               ),
             ),
           );
@@ -379,17 +380,33 @@ Respond in the same language as the user's question.
     });
 
     try {
-      // ✅ Prepare the API request
+      // Get current language name
+      String language = "English";
+      final locale = Get.locale?.languageCode;
+      if (locale == 'hi') {
+        language = "Hindi";
+      } else if (locale == 'mr') {
+        language = "Marathi";
+      } else if (locale == 'pa') {
+        language = "Punjabi";
+      } else if (locale == 'ta') {
+        language = "Tamil";
+      }
+
+      // Prepare the API request
       final List<Map<String, dynamic>> contents = [
         {
           "role": "user",
           "parts": [
-            {"text": "$systemPrompt\n\nUser Question: ${chatMessage.text}"}
+            {
+              "text":
+                  "$systemPrompt\n\nUser Question: ${chatMessage.text}\n\nIMPORTANT: Respond ONLY in $language language."
+            }
           ]
         }
       ];
 
-      // ✅ Add conversation history for context
+      // Add conversation history for context
       for (int i = 0; i < messages.length && i < 6; i++) {
         if (messages[i].user.id == currentUser.id) {
           contents.insert(0, {
@@ -412,7 +429,7 @@ Respond in the same language as the user's question.
         "contents": contents,
         "generationConfig": {
           "temperature": 0.7,
-          "maxOutputTokens": 1024,
+          "maxOutputTokens": 4096,
           "topP": 0.95,
           "topK": 40,
         },
@@ -436,7 +453,7 @@ Respond in the same language as the user's question.
         ]
       };
 
-      // ✅ Make the API call
+      // Make the API call
       final response = await http.post(
         Uri.parse(apiUrl),
         headers: {
@@ -447,7 +464,7 @@ Respond in the same language as the user's question.
 
       final decoded = jsonDecode(response.body);
 
-      // ✅ Handle response
+      // Handle response
       if (response.statusCode == 200 &&
           decoded["candidates"] != null &&
           decoded["candidates"].isNotEmpty) {
@@ -482,7 +499,7 @@ Respond in the same language as the user's question.
           ChatMessage(
             user: geminiUser,
             createdAt: DateTime.now(),
-            text: "⚠️  Connection Issue \n\n"
+            text: "${"connection_issue".tr} \n\n"
                 "I'm having trouble connecting right now.\n\n"
                 " Quick fixes: \n"
                 "• Check your internet connection\n"

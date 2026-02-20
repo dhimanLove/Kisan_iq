@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:shimmer/shimmer.dart';
@@ -43,6 +44,7 @@ class _NewsPageState extends State<NewsPage> {
 
   PreferredSizeWidget _buildAppBar() {
     return AppBar(
+      automaticallyImplyLeading: false,
       elevation: 0,
       backgroundColor: primaryGreen,
       title: Row(
@@ -56,20 +58,20 @@ class _NewsPageState extends State<NewsPage> {
             child: Icon(Icons.newspaper, color: primaryGreen, size: 24),
           ),
           const SizedBox(width: 12),
-          const Column(
+          Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "Krishi News",
-                style: TextStyle(
+                "krishi_news".tr,
+                style: const TextStyle(
                   color: Colors.white,
                   fontSize: 18,
                   fontWeight: FontWeight.w600,
                 ),
               ),
               Text(
-                "Latest agriculture updates",
-                style: TextStyle(
+                "latest_updates".tr,
+                style: const TextStyle(
                   color: Colors.white70,
                   fontSize: 12,
                   fontWeight: FontWeight.w400,
@@ -107,22 +109,14 @@ class _NewsPageState extends State<NewsPage> {
           children: [
             Icon(Icons.newspaper, color: primaryGreen),
             const SizedBox(width: 8),
-            const Text("About Krishi News"),
+            Text("about_news".tr),
           ],
         ),
-        content: const Text(
-          "Stay updated with the latest agricultural news from India:\n\n"
-          "• Government schemes & policies\n"
-          "• Market prices & trends\n"
-          "• Weather updates\n"
-          "• New farming techniques\n"
-          "• Success stories\n\n"
-          "News sourced from GNews.io",
-        ),
+        content: Text("news_info".tr),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text("Got it", style: TextStyle(color: primaryGreen)),
+            child: Text("got_it".tr, style: TextStyle(color: primaryGreen)),
           ),
         ],
       ),
@@ -251,9 +245,9 @@ class _NewsPageState extends State<NewsPage> {
               ),
             ),
             const SizedBox(height: 20),
-            const Text(
-              "Failed to load news",
-              style: TextStyle(
+            Text(
+              "failed_load_news".tr,
+              style: const TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.w600,
                 color: Colors.black87,
@@ -261,7 +255,7 @@ class _NewsPageState extends State<NewsPage> {
             ),
             const SizedBox(height: 8),
             Text(
-              "Please check your internet connection",
+              "check_internet".tr,
               style: TextStyle(
                 fontSize: 14,
                 color: Colors.grey[600],
@@ -278,12 +272,13 @@ class _NewsPageState extends State<NewsPage> {
                 _getNews();
               },
               icon: const Icon(Icons.refresh),
-              label: const Text("Retry"),
+              label: Text("retry".tr),
               style: ElevatedButton.styleFrom(
                 backgroundColor: primaryGreen,
                 foregroundColor: Colors.white,
                 elevation: 0,
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
@@ -308,7 +303,7 @@ class _NewsPageState extends State<NewsPage> {
             ),
             const SizedBox(height: 16),
             Text(
-              "No news available",
+              "no_news".tr,
               style: TextStyle(
                 fontSize: 16,
                 color: Colors.grey[600],
@@ -383,7 +378,7 @@ class _NewsPageState extends State<NewsPage> {
                               ),
                               const SizedBox(height: 8),
                               Text(
-                                "No image available",
+                                "no_image".tr,
                                 style: TextStyle(
                                   fontSize: 12,
                                   color: Colors.grey[500],
@@ -414,7 +409,7 @@ class _NewsPageState extends State<NewsPage> {
                                 borderRadius: BorderRadius.circular(6),
                               ),
                               child: Text(
-                                article.source?.name ?? "Agriculture",
+                                article.source?.name ?? "agriculture_label".tr,
                                 style: TextStyle(
                                   fontSize: 11,
                                   color: primaryGreen,
@@ -482,7 +477,7 @@ class _NewsPageState extends State<NewsPage> {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Text(
-                                "Read full article",
+                                "read_more".tr,
                                 style: TextStyle(
                                   fontSize: 13,
                                   color: primaryGreen,
@@ -512,8 +507,9 @@ class _NewsPageState extends State<NewsPage> {
 
   Future<void> _getNews() async {
     try {
+      final lang = Get.locale?.languageCode ?? 'en';
       final response = await dio.get(
-        'https://gnews.io/api/v4/search?q=agriculture&country=in&lang=hi&apikey=$NEWS_API',
+        'https://gnews.io/api/v4/search?q=agriculture&country=in&lang=$lang&apikey=$NEWS_API',
       );
 
       final List articlesJson = response.data["articles"];
@@ -541,7 +537,7 @@ class _NewsPageState extends State<NewsPage> {
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: const Text("Could not open link"),
+          content: Text("could_not_open_link".tr),
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),

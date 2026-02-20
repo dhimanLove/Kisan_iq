@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
 import 'package:kisan_iq/utils/Api_key.dart';
@@ -52,7 +53,7 @@ Respond in the language used by the user.
         mainResponse = '';
       });
     } catch (e) {
-      print("Image pick error: $e");
+      debugPrint("Image pick error: $e");
     }
   }
 
@@ -68,12 +69,28 @@ Respond in the language used by the user.
       final bytes = await File(pickedImage!.path).readAsBytes();
       final base64Image = base64Encode(bytes);
 
+      // Get current language name
+      String language = "English";
+      final locale = Get.locale?.languageCode;
+      if (locale == 'hi') {
+        language = "Hindi";
+      } else if (locale == 'mr') {
+        language = "Marathi";
+      } else if (locale == 'pa') {
+        language = "Punjabi";
+      } else if (locale == 'ta') {
+        language = "Tamil";
+      }
+
       final body = {
         "contents": [
           {
             "role": "user",
             "parts": [
-              {"text": "$systemPrompt\n\nUser Question: ${prompt.text.trim()}"},
+              {
+                "text":
+                    "$systemPrompt\n\nUser Question: ${prompt.text.trim()}\n\nIMPORTANT: Respond ONLY in $language language."
+              },
               {
                 "inline_data": {"mime_type": "image/jpeg", "data": base64Image}
               }
@@ -82,7 +99,7 @@ Respond in the language used by the user.
         ],
         "generationConfig": {
           "temperature": 0.6,
-          "maxOutputTokens": 1024,
+          "maxOutputTokens": 4096,
           "topP": 0.9
         }
       };
@@ -169,7 +186,7 @@ Respond in the language used by the user.
                         ),
                         const SizedBox(height: 12),
                         Text(
-                          "Tap to upload farm image",
+                          "tap_upload".tr,
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w500,
@@ -251,7 +268,7 @@ Respond in the language used by the user.
               maxLines: 3,
               minLines: 1,
               decoration: InputDecoration(
-                hintText: "Ask about crop disease, soil, pest...",
+                hintText: "ask_crop_hint".tr,
                 hintStyle: TextStyle(
                   color: Colors.grey[500],
                   fontSize: 14,
@@ -286,10 +303,10 @@ Respond in the language used by the user.
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.analytics_outlined, size: 20),
+                  const Icon(Icons.analytics_outlined, size: 20),
                   const SizedBox(width: 8),
                   Text(
-                    "Analyze Crop",
+                    "analyze_crop_btn".tr,
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
@@ -316,7 +333,7 @@ Respond in the language used by the user.
                   ),
                   const SizedBox(height: 12),
                   Text(
-                    "Analyzing image...",
+                    "analyzing".tr,
                     style: TextStyle(
                       color: Colors.grey[600],
                       fontSize: 14,
@@ -365,7 +382,7 @@ Respond in the language used by the user.
                       ),
                       const SizedBox(width: 8),
                       Text(
-                        "Analysis Report",
+                        "analysis_report".tr,
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
@@ -375,9 +392,9 @@ Respond in the language used by the user.
                     ],
                   ),
                   const SizedBox(height: 16),
-                  Markdown(
+                  MarkdownBody(
                     data: mainResponse,
-                    shrinkWrap: true,
+                    selectable: true,
                     styleSheet: MarkdownStyleSheet(
                       p: TextStyle(
                         fontSize: 15,
@@ -410,6 +427,7 @@ Respond in the language used by the user.
 
   PreferredSizeWidget _buildAppBar() {
     return AppBar(
+      automaticallyImplyLeading: false,
       elevation: 0,
       backgroundColor: primaryGreen,
       title: Row(
@@ -423,20 +441,20 @@ Respond in the language used by the user.
             child: Icon(Icons.agriculture, color: primaryGreen, size: 24),
           ),
           const SizedBox(width: 12),
-          const Column(
+          Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "Image Scan",
-                style: TextStyle(
+                "image_scan".tr,
+                style: const TextStyle(
                   color: Colors.white,
                   fontSize: 18,
                   fontWeight: FontWeight.w600,
                 ),
               ),
               Text(
-                "Analyze crops & soil",
-                style: TextStyle(
+                "analyze_crops".tr,
+                style: const TextStyle(
                   color: Colors.white70,
                   fontSize: 12,
                   fontWeight: FontWeight.w400,
@@ -464,21 +482,14 @@ Respond in the language used by the user.
           children: [
             Icon(Icons.agriculture, color: primaryGreen),
             const SizedBox(width: 8),
-            const Text("About Image Scan"),
+            Text("about_image_scan".tr),
           ],
         ),
-        content: const Text(
-          "Upload photos of your crops to get instant analysis on:\n\n"
-          "• Crop health & diseases\n"
-          "• Pest infestations\n"
-          "• Nutrient deficiencies\n"
-          "• Soil conditions\n"
-          "• Recommended treatments",
-        ),
+        content: Text("image_scan_info".tr),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text("Got it", style: TextStyle(color: primaryGreen)),
+            child: Text("got_it".tr, style: TextStyle(color: primaryGreen)),
           ),
         ],
       ),
