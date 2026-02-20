@@ -186,7 +186,8 @@ Respond in the same language as the user's question.
             ),
             child: Text(
               "got_it".tr,
-              style: TextStyle(color: primaryGreen, fontWeight: FontWeight.w600),
+              style:
+                  TextStyle(color: primaryGreen, fontWeight: FontWeight.w600),
             ),
           ),
         ],

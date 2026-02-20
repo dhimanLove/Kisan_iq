@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:kisan_iq/pages/chat_bot.dart';
 import 'package:kisan_iq/pages/description_generator.dart';
@@ -16,17 +15,12 @@ class _AdminPanelState extends State<AdminPanel> {
   int _selectedIndex = 0;
   final PageController _pageController = PageController();
 
-  final List<Widget> _pages = const [
-    ChatBot(),
-    ImageChat(),
-    NewsPage(),
-  ];
+  static const Color _primaryGreen = Color(0xFF2E7D32);
 
-  // Clean, neutral color palette
-  final List<Color> _accentColors = const [
-    Color(0xFF2E7D32), // Green
-    Color(0xFF0288D1), // Blue
-    Color(0xFF7B1FA2), // Purple
+  final List<Widget> _pages = const [
+    ImageChat(), // index 0 — first page
+    ChatBot(), // index 1
+    NewsPage(), // index 2
   ];
 
   void _onItemTapped(int index) {
@@ -36,49 +30,53 @@ class _AdminPanelState extends State<AdminPanel> {
 
   @override
   Widget build(BuildContext context) {
-    // Dynamically get titles to support locale changes
-    final List<String> titles = ["chatbot".tr, "analyze".tr, "news".tr];
+    final List<String> titles = [
+      "analyze".tr, // matches ImageChat
+      "chatbot".tr, // matches ChatBot
+      "news".tr, // matches NewsPage
+    ];
 
     return Scaffold(
-      backgroundColor: Colors.white,
-      body: Column(
-        children: [
-          Expanded(
-            child: PageView(
-              controller: _pageController,
-              physics: const NeverScrollableScrollPhysics(),
-              children: _pages,
-              onPageChanged: (index) {
-                setState(() => _selectedIndex = index);
-              },
-            ),
-          ),
-        ],
+      backgroundColor: const Color(0xFFF1F8F4),
+      extendBody: true,
+      body: PageView(
+        controller: _pageController,
+        physics: const NeverScrollableScrollPhysics(),
+        onPageChanged: (index) => setState(() => _selectedIndex = index),
+        children: _pages,
       ),
-      bottomNavigationBar: Container(
+      bottomNavigationBar: _buildFloatingNav(titles),
+    );
+  }
+
+  Widget _buildFloatingNav(List<String> titles) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(18, 0, 18, 28),
+      child: Container(
+        height: 75,
         decoration: BoxDecoration(
-          color: Colors.white,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.05),
-              blurRadius: 10,
-              offset: const Offset(0, -5),
-            ),
-          ],
+          color: _primaryGreen,
+          borderRadius: BorderRadius.circular(40),
         ),
-        child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                _buildNavItem(
-                    Icons.chat_bubble_outline, Icons.chat_bubble, 0, titles),
-                _buildNavItem(
-                    Icons.auto_awesome, Icons.auto_awesome, 1, titles),
-                _buildNavItem(
-                    Icons.newspaper_outlined, Icons.newspaper, 2, titles),
-              ],
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+          child: Row(
+            children: List.generate(
+              titles.length,
+              (i) => _buildNavItem(
+                outlinedIcon: [
+                  Icons.photo_camera_outlined, // Image Scan
+                  Icons.chat_bubble_outline_rounded, // Chatbot
+                  Icons.article_outlined, // News
+                ][i],
+                filledIcon: [
+                  Icons.photo_camera_rounded,
+                  Icons.chat_bubble_rounded,
+                  Icons.article_rounded,
+                ][i],
+                index: i,
+                label: titles[i],
+              ),
             ),
           ),
         ),
@@ -86,41 +84,58 @@ class _AdminPanelState extends State<AdminPanel> {
     );
   }
 
-  Widget _buildNavItem(IconData outlinedIcon, IconData filledIcon, int index,
-      List<String> titles) {
+  Widget _buildNavItem({
+    required IconData outlinedIcon,
+    required IconData filledIcon,
+    required int index,
+    required String label,
+  }) {
     final bool isSelected = _selectedIndex == index;
 
-    return GestureDetector(
-      onTap: () => _onItemTapped(index),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-        decoration: BoxDecoration(
-          color: isSelected
-              ? _accentColors[index].withOpacity(0.1)
-              : Colors.transparent,
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              isSelected ? filledIcon : outlinedIcon,
-              color: isSelected ? _accentColors[index] : Colors.grey[600],
-              size: 24,
-            ),
-            if (isSelected) ...[
-              const SizedBox(width: 8),
+    return Expanded(
+      child: GestureDetector(
+        onTap: () => _onItemTapped(index),
+        behavior: HitTestBehavior.opaque,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 260),
+          curve: Curves.easeInOut,
+          margin: const EdgeInsets.symmetric(horizontal: 4),
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+          decoration: BoxDecoration(
+            color: isSelected ? Colors.white : Colors.transparent,
+            borderRadius: BorderRadius.circular(30),
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              AnimatedScale(
+                scale: isSelected ? 1.08 : 1.0,
+                duration: const Duration(milliseconds: 220),
+                child: Icon(
+                  isSelected ? filledIcon : outlinedIcon,
+                  color: isSelected
+                      ? _primaryGreen
+                      : Colors.white.withOpacity(0.75),
+                  size: 22,
+                ),
+              ),
+              const SizedBox(height: 3),
               Text(
-                titles[index],
+                label,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
                 style: TextStyle(
-                  color: _accentColors[index],
-                  fontWeight: FontWeight.w500,
-                  fontSize: 14,
+                  color: isSelected
+                      ? _primaryGreen
+                      : Colors.white.withOpacity(0.75),
+                  fontSize: 11,
+                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+                  letterSpacing: 0.1,
                 ),
               ),
             ],
-          ],
+          ),
         ),
       ),
     );
