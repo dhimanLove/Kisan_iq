@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "899039557300",
+    "project_id": "plant-a4646",
+    "storage_bucket": "plant-a4646.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:899039557300:android:4e1a1253b8b2e736f6c9e1",
+        "android_client_info": {
+          "package_name": "com.example.kisan_iq"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "899039557300-7pslevaqih302nfgfc2cv110el84vpq4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCQWqOKgqDStHHMrkDT4wH2Wbo4eH_IqJQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "899039557300-7pslevaqih302nfgfc2cv110el84vpq4.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
